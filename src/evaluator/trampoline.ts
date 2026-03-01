@@ -89,6 +89,7 @@ import type {
   CallFnFrame,
   CondFrame,
   ContinuationStack,
+  DebugStepFrame,
   EffectResumeFrame,
   EvalArgsFrame,
   EvaluatedWithHandler,
@@ -1459,6 +1460,8 @@ export function applyFrame(frame: Frame, value: Any, k: ContinuationStack): Step
       return applyBindingDefault(frame, value, k)
     case 'NanCheck':
       return applyNanCheck(frame, value, k)
+    case 'DebugStep':
+      return applyDebugStep(frame, value, k)
     /* v8 ignore next 2 */
     default: {
       const _exhaustive: never = frame
@@ -2095,6 +2098,17 @@ function handleRecur(params: Arr, k: ContinuationStack, sourceCodeInfo: SourceCo
       )
 
       return chain(rebindAll, () => {
+        // After serialization/deserialization, env's innermost context and
+        // bindingContext may be separate copies. Sync them by copying the
+        // updated bindings into the env's innermost context.
+        const envContexts = env.getContextsRaw()
+        const innermostContext = envContexts[0]!
+        if (innermostContext !== bindingContext) {
+          for (const [name, entry] of Object.entries(bindingContext)) {
+            innermostContext[name] = entry
+          }
+        }
+
         // Push fresh LoopIterateFrame and re-evaluate body
         const newIterateFrame: LoopIterateFrame = {
           type: 'LoopIterate',
@@ -2730,6 +2744,74 @@ function applyNanCheck(frame: NanCheckFrame, value: Any, k: ContinuationStack): 
 }
 
 // ---------------------------------------------------------------------------
+// Debug step handling
+// ---------------------------------------------------------------------------
+
+/**
+ * Extract all visible bindings from a ContextStack as a flat record.
+ * Iterates from outermost to innermost scope so that inner bindings
+ * shadow outer ones, matching Lits scoping semantics.
+ */
+export function extractBindings(env: ContextStack): Record<string, Any> {
+  const result: Record<string, Any> = {}
+  // Include host values (plain bindings passed at creation)
+  const hostValues = env.getHostValues()
+  if (hostValues) {
+    for (const [name, value] of Object.entries(hostValues)) {
+      result[name] = value as Any
+    }
+  }
+  const contexts = env.getContextsRaw()
+  // Outer scopes first, inner override
+  for (let i = contexts.length - 1; i >= 0; i--) {
+    for (const [name, entry] of Object.entries(contexts[i]!)) {
+      result[name] = entry.value
+    }
+  }
+  return result
+}
+
+/**
+ * Apply a DebugStepFrame.
+ *
+ * Phase 'awaitValue': The compound expression just evaluated to `value`.
+ *   Build step info and produce a PerformStep for `lits.debug.step`.
+ *   Push self (in 'awaitPerform' phase) onto k so that when the debug
+ *   perform completes, the value flows through correctly.
+ *
+ * Phase 'awaitPerform': The debug perform completed (handler resumed or
+ *   suspension was resumed). Pass the value through to the next frame.
+ *   For normal stepping, the debugger resumes with the original value.
+ *   For `rerunFrom`, the debugger resumes with an alternate value.
+ */
+function applyDebugStep(frame: DebugStepFrame, value: Any, k: ContinuationStack): Step {
+  if (frame.phase === 'awaitValue') {
+    // Build step info from source code info and evaluation result
+    const stepInfo: Obj = {
+      expression: frame.sourceCodeInfo?.code ?? '',
+      value,
+      location: frame.sourceCodeInfo
+        ? { line: frame.sourceCodeInfo.position.line, column: frame.sourceCodeInfo.position.column }
+        : { line: 0, column: 0 },
+      env: extractBindings(frame.env),
+    }
+
+    // Push awaitPerform phase frame, then produce PerformStep
+    const awaitFrame: DebugStepFrame = {
+      type: 'DebugStep',
+      phase: 'awaitPerform',
+      sourceCodeInfo: frame.sourceCodeInfo,
+      env: frame.env,
+    }
+    const debugEffect = getEffectRef('lits.debug.step')
+    return { type: 'Perform', effect: debugEffect, args: [stepInfo as Any], k: [awaitFrame, ...k] }
+  }
+
+  // phase === 'awaitPerform': pass through the value
+  return { type: 'Value', value, k }
+}
+
+// ---------------------------------------------------------------------------
 // Utility functions
 // ---------------------------------------------------------------------------
 
@@ -2981,12 +3063,21 @@ export async function resumeWithEffects(
 /**
  * Shared effect trampoline loop used by both `evaluateWithEffects` and
  * `resumeWithEffects`. Runs the trampoline to completion, suspension, or error.
+ *
+ * When `handlers` includes a `lits.debug.step` handler, the loop enters
+ * debug mode: before evaluating compound nodes (NormalExpression,
+ * SpecialExpression) that have source code info, a `DebugStepFrame` is
+ * pushed onto the continuation stack. This causes each compound expression
+ * to fire a `perform(lits.debug.step, stepInfo)` after evaluation,
+ * enabling the time-travel debugger.
  */
 async function runEffectLoop(
   initial: Step,
   handlers: Handlers | undefined,
   signal: AbortSignal,
 ): Promise<RunResult> {
+  const debugMode = handlers != null && 'lits.debug.step' in handlers
+
   try {
     let step: Step | Promise<Step> = initial
     for (;;) {
@@ -2996,6 +3087,21 @@ async function runEffectLoop(
       if (step.type === 'Value' && step.k.length === 0) {
         return { type: 'completed', value: step.value }
       }
+
+      // Debug mode: inject DebugStepFrame for compound nodes with source info
+      if (debugMode && step.type === 'Eval' && step.node[2]) {
+        const nodeType = step.node[0]
+        if (nodeType === NodeTypes.NormalExpression || nodeType === NodeTypes.SpecialExpression) {
+          const debugFrame: DebugStepFrame = {
+            type: 'DebugStep',
+            phase: 'awaitValue',
+            sourceCodeInfo: step.node[2],
+            env: step.env,
+          }
+          step = { ...step, k: [debugFrame, ...step.k] }
+        }
+      }
+
       step = tick(step, handlers, signal)
     }
   }

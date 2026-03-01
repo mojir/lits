@@ -56,6 +56,11 @@ export class ContextStackImpl {
     return this._contexts
   }
 
+  /** Get host values (plain bindings passed at creation). */
+  public getHostValues(): Record<string, unknown> | undefined {
+    return this.values
+  }
+
   /**
    * Find the index of globalContext in the _contexts array.
    * Returns -1 if not found (should not happen in valid state).

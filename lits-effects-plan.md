@@ -750,31 +750,36 @@ let [a b c] = parallel(
 
 ---
 
-## Phase 7 — Time-Travel Debugger
+## Phase 7 — Time-Travel Debugger ✅ DONE
 
-### 7a. `lits.debug.step` injection
+### 7a. `lits.debug.step` injection ✅ DONE
 
 When a `lits.debug.step` handler is registered, the trampoline injects a `perform(lits.debug.step)`
 between every evaluation step. No changes to Lits source needed.
 
-Each injection captures a `HistoryEntry`:
+Implemented via `DebugStepFrame` in `src/evaluator/frames.ts` and `applyDebugStep` in `src/evaluator/trampoline.ts`:
+
+- `buildDebugAst(source)` in `src/debug.ts` parses with `debug: true`, adding `sourceCodeInfo` to all AST nodes
+- The trampoline wraps each compound node's result in a `DebugStepFrame` that captures expression text, value, location, and bindings via `extractBindings(env)`
+- `extractBindings` merges host values (from `bindings` option) and all context scopes into a flat `Record<string, Any>`
+
+Each injection captures a `StepInfo`:
 
 ```typescript
-interface HistoryEntry {
-  step:        number
-  blob:        string          // serialized continuation at this point
-  node:        AstNode         // expression being evaluated
-  value:       LitsValue       // result of this expression
-  bindings:    Record<string, LitsValue>  // all in-scope bindings
-  sourceInfo:  SourceCodeInfo
-  timestamp:   number
+interface StepInfo {
+  expression: string
+  value: Any
+  location: { line: number, column: number }
+  env: Record<string, Any>
 }
 ```
 
-### 7b. Debugger API
+History entries store `{ step: StepInfo, blob: SuspensionBlob }`.
+
+### 7b. Debugger API ✅ DONE
 
 ```typescript
-const dbg = createDebugger({ handlers })
+const dbg = createDebugger({ handlers, bindings, modules })
 await dbg.run(source)
 await dbg.stepForward()
 await dbg.stepBackward()         // resume older blob
@@ -785,6 +790,30 @@ await dbg.rerunFrom(n, value)   // discard history after n, resume with alternat
 `stepBackward` and `jumpTo` are just `resume(history[n].blob, ...)` — no special mechanism needed.
 `rerunFrom` discards `history[n+1..]` and resumes from `history[n].blob` with a new value —
 creating an alternate execution timeline.
+
+**Implementation details:**
+
+- `src/debug.ts` — `createDebugger()` factory, `LitsDebugger` interface, `buildDebugAst`, `processResult`, `parseStepInfo`, `resumeFromBlob`
+- `src/evaluator/frames.ts` — `DebugStepFrame` frame type (two phases: `awaitValue` and `awaitPerform`)
+- `src/evaluator/trampoline.ts` — `applyDebugStep()`, `extractBindings()`, debug injection in `runEffectLoop`
+- `src/evaluator/ContextStack.ts` — `getHostValues()` method to expose host bindings for `extractBindings`
+- Export via `@mojir/lits/debug` in `package.json` and `rollup.config.js`
+- `__tests__/debugger.test.ts` — 40 tests covering:
+  - Basic stepping (pause, capture, bindings, no-handler passthrough)
+  - Compound-node-only stepping
+  - forward/backward/jumpTo navigation, history tracking, blob validity
+  - `rerunFrom` with alternate values (alternate timelines)
+  - Error handling (syntax errors, runtime errors, try/catch)
+  - Loop/recur (with serialization identity fix for `handleRecur`)
+  - Effects integration (host effect handlers + debug stepping)
+  - Higher-order functions (closures, fn composition)
+  - Outer scope bindings (host bindings visible via `extractBindings`)
+  - Modules support, edge cases
+
+**Key bug fix:** After serialization/deserialization during debug stepping, `LoopIterateFrame.bindingContext` and the env's innermost `Context` lose their shared object identity. `handleRecur` was only mutating `bindingContext`, so loop variables never updated in the env. Fixed by syncing changes to the env's innermost context when identity is broken.
+
+- `npm run check` passes (lint, typecheck, 5275 tests, build)
+- Coverage: debug.ts at 95.88% statements, 100% functions (uncovered lines are defensive catch blocks for non-LitsError errors that get wrapped in LitsError by the handler dispatch before reaching these paths)
 
 ---
 

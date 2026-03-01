@@ -104,6 +104,11 @@
       "types": "./dist/src/modules/convert.d.ts",
       "import": "./dist/modules/convert.esm.js",
       "require": "./dist/modules/convert.js"
+    },
+    "./debug": {
+      "types": "./dist/src/debug.d.ts",
+      "import": "./dist/debug.esm.js",
+      "require": "./dist/debug.js"
     }
   },
   "main": "dist/index.js",

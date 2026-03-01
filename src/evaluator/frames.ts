@@ -545,6 +545,31 @@ export interface NanCheckFrame {
 }
 
 // ---------------------------------------------------------------------------
+// Debug
+// ---------------------------------------------------------------------------
+
+/**
+ * Injected by the trampoline in debug mode (when a `lits.debug.step` handler
+ * is registered). Wraps compound expression evaluation to intercept the result
+ * and produce a `PerformStep` for `lits.debug.step`.
+ *
+ * Two-phase lifecycle:
+ * 1. **awaitValue**: Pushed before evaluating a compound node. Receives the
+ *    node's evaluation result, builds step info, and produces a `PerformStep`
+ *    for `lits.debug.step` with the step info as args.
+ * 2. **awaitPerform**: The debug perform completed (handler resumed or
+ *    suspension was resumed). Passes the value through to the next frame.
+ *    For normal stepping, the debugger resumes with the original value.
+ *    For `rerunFrom`, the debugger resumes with an alternate value.
+ */
+export interface DebugStepFrame {
+  type: 'DebugStep'
+  phase: 'awaitValue' | 'awaitPerform'
+  sourceCodeInfo?: SourceCodeInfo
+  env: ContextStack
+}
+
+// ---------------------------------------------------------------------------
 // Frame union type
 // ---------------------------------------------------------------------------
 
@@ -565,6 +590,7 @@ export interface NanCheckFrame {
  * - **Function calls**: EvalArgsFrame, CallFnFrame, FnBodyFrame
  * - **Destructuring**: BindingDefaultFrame
  * - **Post-processing**: NanCheckFrame
+ * - **Debug**: DebugStepFrame
  */
 export type Frame =
   // Program flow
@@ -603,6 +629,8 @@ export type Frame =
   | BindingDefaultFrame
   // Post-processing
   | NanCheckFrame
+  // Debug
+  | DebugStepFrame
 
 /**
  * Array type alias for readability — a continuation stack is just

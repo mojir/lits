@@ -66,8 +66,9 @@ describe('frame types', () => {
       FnBody: true,
       BindingDefault: true,
       NanCheck: true,
+      DebugStep: true,
     }
-    expect(Object.keys(frameTypes)).toHaveLength(25)
+    expect(Object.keys(frameTypes)).toHaveLength(26)
   })
 
   it('should support ContinuationStack as Frame array', () => {
@@ -106,6 +107,7 @@ describe('frame types', () => {
         case 'FnBody': return 'call'
         case 'BindingDefault': return 'destructure'
         case 'NanCheck': return 'post'
+        case 'DebugStep': return 'debug'
         default: {
           // Exhaustiveness check: if this line is reached, a frame type is missing
           const _exhaustive: never = frame

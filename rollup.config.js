@@ -191,4 +191,21 @@ module.exports = [
     ],
     plugins,
   },
+  // Debug bundle (time-travel debugger)
+  {
+    input: 'src/debug.ts',
+    output: [
+      {
+        file: 'dist/debug.esm.js',
+        format: 'esm',
+        sourcemap: true,
+      },
+      {
+        file: 'dist/debug.js',
+        format: 'cjs',
+        sourcemap: true,
+      },
+    ],
+    plugins,
+  },
 ]
