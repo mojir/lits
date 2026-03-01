@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { Lits } from '../src/Lits/Lits'
+import { run, runSync } from '../src/effects'
+import { mathUtilsModule } from '../src/builtin/modules/math'
 
 const lits = new Lits()
 
@@ -356,6 +358,488 @@ describe('phase 2 — Local Effect Handling', () => {
         [==(eff1, eff2), ==(eff1, eff3)]
       `)
       expect(result).toEqual([true, false])
+    })
+  })
+})
+
+describe('phase 3 — Host Async API', () => {
+  describe('3a: runSync standalone function', () => {
+    it('should evaluate a simple expression', () => {
+      const result = runSync('[1, 2, 3] |> map(_, -> $ * $)')
+      expect(result).toEqual([1, 4, 9])
+    })
+
+    it('should accept bindings with JS functions', () => {
+      const result = runSync('double(21)', {
+        bindings: { double: (x: number) => x * 2 },
+      })
+      expect(result).toBe(42)
+    })
+
+    it('should accept plain value bindings', () => {
+      const result = runSync('x + y', {
+        bindings: { x: 10, y: 32 },
+      })
+      expect(result).toBe(42)
+    })
+
+    it('should support modules', () => {
+      const result = runSync('let m = import(math); m.ln(1)', {
+        modules: [mathUtilsModule],
+      })
+      expect(result).toBe(0)
+    })
+  })
+
+  describe('3a: run standalone function', () => {
+    it('should return completed result for simple expression', async () => {
+      const result = await run('[1, 2, 3] |> reduce(_, +, 0)')
+      expect(result).toEqual({ type: 'completed', value: 6 })
+    })
+
+    it('should accept plain value bindings', async () => {
+      const result = await run('x + y', {
+        bindings: { x: 10, y: 32 },
+      })
+      expect(result).toEqual({ type: 'completed', value: 42 })
+    })
+
+    it('should support modules', async () => {
+      const result = await run('let m = import(math); m.ln(1)', {
+        modules: [mathUtilsModule],
+      })
+      expect(result).toEqual({ type: 'completed', value: 0 })
+    })
+
+    it('should return error result for runtime errors', async () => {
+      const result = await run('throw("boom")')
+      expect(result.type).toBe('error')
+      if (result.type === 'error') {
+        expect(result.error.message).toContain('boom')
+      }
+    })
+
+    it('should return error result for syntax errors', async () => {
+      const result = await run('(((')
+      expect(result.type).toBe('error')
+    })
+  })
+
+  describe('3b: host handler — sync resume', () => {
+    it('should resume with a synchronous value', async () => {
+      const result = await run(`
+        perform(effect(my.double), 21)
+      `, {
+        handlers: {
+          'my.double': async ({ args, resume }) => {
+            resume((args[0] as number) * 2)
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: 42 })
+    })
+
+    it('should resume with a computed value', async () => {
+      const result = await run(`
+        let msg = perform(effect(my.greet), "world");
+        msg
+      `, {
+        handlers: {
+          'my.greet': async ({ args, resume }) => {
+            resume(`Hello, ${args[0]}!`)
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: 'Hello, world!' })
+    })
+
+    it('should handle multiple host effects sequentially', async () => {
+      const result = await run(`
+        let a = perform(effect(my.add), 10, 20);
+        let b = perform(effect(my.add), a, 12);
+        b
+      `, {
+        handlers: {
+          'my.add': async ({ args, resume }) => {
+            resume((args[0] as number) + (args[1] as number))
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: 42 })
+    })
+
+    it('should resume with no-arg effect', async () => {
+      const result = await run(`
+        perform(effect(my.now))
+      `, {
+        handlers: {
+          'my.now': async ({ resume }) => {
+            resume(1234567890)
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: 1234567890 })
+    })
+  })
+
+  describe('3b: host handler — async resume', () => {
+    it('should resume with an async value (promise)', async () => {
+      const result = await run(`
+        perform(effect(my.fetch), "data")
+      `, {
+        handlers: {
+          'my.fetch': async ({ args, resume }) => {
+            const value = await Promise.resolve(`fetched: ${args[0]}`)
+            resume(value)
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: 'fetched: data' })
+    })
+
+    it('should resume with a promise value directly', async () => {
+      const result = await run(`
+        perform(effect(my.delayed), 42)
+      `, {
+        handlers: {
+          'my.delayed': async ({ args, resume }) => {
+            resume(Promise.resolve(args[0]!))
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: 42 })
+    })
+
+    it('should handle async errors from promise resume', async () => {
+      const result = await run(`
+        try
+          perform(effect(my.fail), "oops")
+        catch (e)
+          "caught: " ++ e.message
+        end
+      `, {
+        handlers: {
+          'my.fail': async ({ resume }) => {
+            resume(Promise.reject(new Error('async failure')))
+          },
+        },
+      })
+      expect(result.type).toBe('completed')
+      if (result.type === 'completed') {
+        expect(result.value).toContain('caught: async failure')
+      }
+    })
+  })
+
+  describe('3b: host handler — unhandled effect', () => {
+    it('should return error for unhandled effect with no handlers', async () => {
+      const result = await run('perform(effect(no.handler), "data")')
+      expect(result.type).toBe('error')
+      if (result.type === 'error') {
+        expect(result.error.message).toContain('Unhandled effect: \'no.handler\'')
+      }
+    })
+
+    it('should return error for unhandled effect with non-matching handlers', async () => {
+      const result = await run('perform(effect(missing.handler), "x")', {
+        handlers: {
+          'other.handler': async ({ resume }) => { resume(null) },
+        },
+      })
+      expect(result.type).toBe('error')
+      if (result.type === 'error') {
+        expect(result.error.message).toContain('Unhandled effect: \'missing.handler\'')
+      }
+    })
+  })
+
+  describe('3b: host handler — error handling', () => {
+    it('should catch host handler errors in Lits try/catch', async () => {
+      const result = await run(`
+        try
+          perform(effect(my.fail))
+        catch (e)
+          "caught: " ++ e.message
+        end
+      `, {
+        handlers: {
+          'my.fail': async () => {
+            throw new Error('handler boom')
+          },
+        },
+      })
+      expect(result.type).toBe('completed')
+      if (result.type === 'completed') {
+        expect(result.value).toContain('caught: handler boom')
+      }
+    })
+
+    it('should propagate handler errors as RunResult.error when no try/catch', async () => {
+      const result = await run(`
+        perform(effect(my.fail))
+      `, {
+        handlers: {
+          'my.fail': async () => {
+            throw new Error('handler error')
+          },
+        },
+      })
+      expect(result.type).toBe('error')
+      if (result.type === 'error') {
+        expect(result.error.message).toContain('handler error')
+      }
+    })
+  })
+
+  describe('3b: local handlers take precedence over host handlers', () => {
+    it('should use local try/with handler instead of host handler', async () => {
+      const result = await run(`
+        try
+          perform(effect(my.eff), "test")
+        with
+          case effect(my.eff) then ([x]) -> "local: " ++ x
+        end
+      `, {
+        handlers: {
+          'my.eff': async ({ args, resume }) => {
+            resume(`host: ${args[0]}`)
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: 'local: test' })
+    })
+
+    it('should delegate to host handler when local handler does not match', async () => {
+      const result = await run(`
+        try
+          perform(effect(other.eff), "test")
+        with
+          case effect(my.eff) then ([x]) -> "local: " ++ x
+        end
+      `, {
+        handlers: {
+          'other.eff': async ({ args, resume }) => {
+            resume(`host: ${args[0]}`)
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: 'host: test' })
+    })
+
+    it('should delegate from local handler to host handler via perform', async () => {
+      const result = await run(`
+        try
+          perform(effect(my.eff), "msg")
+        with
+          case effect(my.eff) then ([x]) -> perform(effect(my.eff), x ++ "+enriched")
+        end
+      `, {
+        handlers: {
+          'my.eff': async ({ args, resume }) => {
+            resume(`host(${args[0]})`)
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: 'host(msg+enriched)' })
+    })
+  })
+
+  describe('3b: host handler — suspend', () => {
+    it('should return suspended result when handler calls suspend', async () => {
+      const result = await run(`
+        let x = perform(effect(my.wait), "please approve");
+        "approved: " ++ x
+      `, {
+        handlers: {
+          'my.wait': async ({ args, suspend }) => {
+            suspend({ payload: args[0] })
+          },
+        },
+      })
+      expect(result.type).toBe('suspended')
+      if (result.type === 'suspended') {
+        expect(result.meta).toEqual({ payload: 'please approve' })
+        expect(result.continuation).toBeDefined()
+        expect(result.continuation.length).toBeGreaterThan(0)
+      }
+    })
+
+    it('should return suspended result with no meta', async () => {
+      const result = await run(`
+        perform(effect(my.pause))
+      `, {
+        handlers: {
+          'my.pause': async ({ suspend }) => {
+            suspend()
+          },
+        },
+      })
+      expect(result.type).toBe('suspended')
+      if (result.type === 'suspended') {
+        expect(result.meta).toBeUndefined()
+      }
+    })
+  })
+
+  describe('3c: AbortSignal', () => {
+    it('should provide an abort signal to the handler', async () => {
+      let receivedSignal: AbortSignal | undefined
+      const result = await run(`
+        perform(effect(my.check))
+      `, {
+        handlers: {
+          'my.check': async ({ signal, resume }) => {
+            receivedSignal = signal
+            resume(true)
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: true })
+      expect(receivedSignal).toBeDefined()
+      expect(receivedSignal!.aborted).toBe(false)
+    })
+  })
+
+  describe('3d: end-to-end integration', () => {
+    it('should run a multi-step effect workflow', async () => {
+      const log: string[] = []
+      const result = await run(`
+        let llm = effect(llm.complete);
+        let summary = perform(llm, "Summarize this doc");
+        let critique = perform(llm, "Critique: " ++ summary);
+        { summary: summary, critique: critique }
+      `, {
+        handlers: {
+          'llm.complete': async ({ args, resume }) => {
+            log.push(args[0] as string)
+            resume(`[result for: ${args[0]}]`)
+          },
+        },
+      })
+      expect(result.type).toBe('completed')
+      if (result.type === 'completed') {
+        const value = result.value as Record<string, string>
+        expect(value.summary).toBe('[result for: Summarize this doc]')
+        expect(value.critique).toBe('[result for: Critique: [result for: Summarize this doc]]')
+      }
+      expect(log).toEqual([
+        'Summarize this doc',
+        'Critique: [result for: Summarize this doc]',
+      ])
+    })
+
+    it('should combine local and host handlers in one program', async () => {
+      const result = await run(`
+        let llm = effect(llm.complete);
+        let log-eff = effect(my.log);
+
+        try
+          let msg = perform(llm, "prompt");
+          perform(log-eff, msg)
+        with
+          case log-eff then ([msg]) -> "logged: " ++ msg
+        end
+      `, {
+        handlers: {
+          'llm.complete': async ({ args, resume }) => {
+            resume(`LLM says: ${args[0]}`)
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: 'logged: LLM says: prompt' })
+    })
+
+    it('should handle try/catch around host effect', async () => {
+      const result = await run(`
+        try
+          perform(effect(my.risky))
+        catch (e)
+          "recovered: " ++ e.message
+        end
+      `, {
+        handlers: {
+          'my.risky': async () => {
+            throw new Error('infrastructure failure')
+          },
+        },
+      })
+      expect(result.type).toBe('completed')
+      if (result.type === 'completed') {
+        expect(result.value).toContain('recovered: infrastructure failure')
+      }
+    })
+
+    it('should work with bindings and handlers together', async () => {
+      const result = await run(`
+        let result = perform(effect(my.compute), x, y);
+        result
+      `, {
+        bindings: { x: 10, y: 32 },
+        handlers: {
+          'my.compute': async ({ args, resume }) => {
+            resume((args[0] as number) + (args[1] as number))
+          },
+        },
+      })
+      expect(result).toEqual({ type: 'completed', value: 42 })
+    })
+
+    it('should handle the LLM example from the API contract', async () => {
+      const result = await run(`
+        let llm     = effect(llm.complete);
+        let approve = effect(com.myco.human.approve);
+
+        let report   = perform(llm, "Generate Q4 report");
+        let decision = perform(approve, report);
+
+        if decision.approved then
+          perform(llm, "Finalize: " ++ report)
+        else
+          "Rejected: " ++ decision.reason
+        end
+      `, {
+        handlers: {
+          'llm.complete': async ({ args, resume }) => {
+            resume(`[LLM: ${args[0]}]`)
+          },
+          'com.myco.human.approve': async ({ resume }) => {
+            resume({ approved: true, reason: null })
+          },
+        },
+      })
+      expect(result.type).toBe('completed')
+      if (result.type === 'completed') {
+        expect(result.value).toBe('[LLM: Finalize: [LLM: Generate Q4 report]]')
+      }
+    })
+
+    it('should handle the approval rejection case', async () => {
+      const result = await run(`
+        let llm     = effect(llm.complete);
+        let approve = effect(com.myco.human.approve);
+
+        let report   = perform(llm, "Generate Q4 report");
+        let decision = perform(approve, report);
+
+        if decision.approved then
+          perform(llm, "Finalize: " ++ report)
+        else
+          "Rejected: " ++ decision.reason
+        end
+      `, {
+        handlers: {
+          'llm.complete': async ({ args, resume }) => {
+            resume(`[LLM: ${args[0]}]`)
+          },
+          'com.myco.human.approve': async ({ resume }) => {
+            resume({ approved: false, reason: 'Budget exceeded' })
+          },
+        },
+      })
+      expect(result.type).toBe('completed')
+      if (result.type === 'completed') {
+        expect(result.value).toBe('Rejected: Budget exceeded')
+      }
     })
   })
 })

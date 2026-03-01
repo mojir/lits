@@ -76,6 +76,8 @@ import { valueToString } from '../utils/debug/debugTools'
 import type { MaybePromise } from '../utils/maybePromise'
 import { chain, forEachSequential, mapSequential, reduceSequential } from '../utils/maybePromise'
 import { FUNCTION_SYMBOL } from '../utils/symbols'
+import type { EffectHandler, Handlers, RunResult } from './effectTypes'
+import { SuspensionSignal, isSuspensionSignal } from './effectTypes'
 import type { ContextStack } from './ContextStack'
 import { getEffectRef } from './effectRef'
 import type {
@@ -2159,7 +2161,7 @@ function applyPerformArgs(frame: PerformArgsFrame, value: Any, k: ContinuationSt
  *   When handler returns V: EffectResumeFrame replaces k with original k,
  *   so V flows through body_k with TryWithFrame still on stack.
  */
-function dispatchPerform(effect: EffectRef, args: Arr, k: ContinuationStack, sourceCodeInfo?: SourceCodeInfo): Step | Promise<Step> {
+function dispatchPerform(effect: EffectRef, args: Arr, k: ContinuationStack, sourceCodeInfo?: SourceCodeInfo, handlers?: Handlers, signal?: AbortSignal): Step | Promise<Step> {
   for (let i = 0; i < k.length; i++) {
     const frame = k[i]!
     if (frame.type === 'TryWith') {
@@ -2199,9 +2201,104 @@ function dispatchPerform(effect: EffectRef, args: Arr, k: ContinuationStack, sou
     }
   }
 
-  // No matching local handler found — throw unhandled effect error.
-  // (Phase 3 will dispatch to host handlers here instead.)
+  // No matching local handler found — dispatch to host handler if available.
+  const hostHandler = handlers?.[effect.name]
+  if (hostHandler) {
+    return dispatchHostHandler(hostHandler, args, k, signal, sourceCodeInfo)
+  }
+
+  // No host handler either — unhandled effect.
   throw new LitsError(`Unhandled effect: '${effect.name}'`, sourceCodeInfo)
+}
+
+/**
+ * Dispatch an effect to a host-provided JavaScript handler.
+ *
+ * Creates an `EffectContext` with `resume` and `suspend` callbacks, then
+ * calls the handler and returns a `Promise<Step>` that resolves when the
+ * handler calls one of those callbacks:
+ *
+ * - `resume(value)` — resolves with a `ValueStep` that continues evaluation
+ *   at the `perform` call site with the provided value and the original `k`.
+ *   If `value` is a `Promise`, it's awaited first.
+ * - `suspend(meta?)` — rejects with a `SuspensionSignal` carrying the
+ *   continuation `k` and optional metadata. The effect trampoline loop
+ *   catches this and returns `RunResult.suspended`.
+ *
+ * Host handler errors are treated as Lits-level errors — they're fed to
+ * `unwindToTryCatch` so that Lits `try/catch` blocks can intercept them.
+ */
+function dispatchHostHandler(
+  handler: EffectHandler,
+  args: Arr,
+  k: ContinuationStack,
+  signal: AbortSignal | undefined,
+  sourceCodeInfo: SourceCodeInfo | undefined,
+): Promise<Step> {
+  const effectSignal = signal ?? new AbortController().signal
+
+  return new Promise<Step>((resolve, reject) => {
+    let settled = false
+
+    const ctx = {
+      args: Array.from(args) as Any[],
+      signal: effectSignal,
+      resume: (value: Any | Promise<Any>) => {
+        if (settled) {
+          throw new LitsError('Effect handler called resume() more than once or after suspend()', sourceCodeInfo)
+        }
+        settled = true
+
+        if (value instanceof Promise) {
+          value.then(
+            (v) => {
+              resolve({ type: 'Value', value: v, k })
+            },
+            (e) => {
+              // The promise-value rejected — treat as a Lits-level error
+              // so try/catch in the Lits program can handle it.
+              try {
+                resolve(unwindToTryCatch(e instanceof Error ? new LitsError(e, sourceCodeInfo) : new LitsError(`${e}`, sourceCodeInfo), k))
+              }
+              catch (unwoundError) {
+                reject(unwoundError)
+              }
+            },
+          )
+        }
+        else {
+          resolve({ type: 'Value', value, k })
+        }
+      },
+      suspend: (meta?: Any) => {
+        if (settled) {
+          throw new LitsError('Effect handler called suspend() more than once or after resume()', sourceCodeInfo)
+        }
+        settled = true
+        reject(new SuspensionSignal(k, meta))
+      },
+    }
+
+    handler(ctx).catch((e) => {
+      if (settled) {
+        // Handler already resolved via resume/suspend — ignore late errors
+        return
+      }
+      settled = true
+      if (isSuspensionSignal(e)) {
+        reject(e)
+      }
+      else {
+        // Handler itself threw — treat as a Lits-level error.
+        try {
+          resolve(unwindToTryCatch(e instanceof Error ? new LitsError(e, sourceCodeInfo) : new LitsError(`${e}`, sourceCodeInfo), k))
+        }
+        catch (unwoundError) {
+          reject(unwoundError)
+        }
+      }
+    })
+  })
 }
 
 function applyEvalArgs(frame: EvalArgsFrame, value: Any, k: ContinuationStack): Step | Promise<Step> {
@@ -2340,9 +2437,12 @@ function getCollectionUtils(): { asColl: (v: Any, s?: SourceCodeInfo) => Any, is
  * - `Value` with non-empty `k`: pop the top frame and apply it.
  * - `Eval`: evaluate an AST node via `stepNode` (always synchronous).
  * - `Apply`: apply a frame to a value (may return Promise<Step>).
- * - `Perform`: effect dispatch (not implemented until Phase 2).
+ * - `Perform`: effect dispatch — local (try/with) first, then host handlers.
+ *
+ * When `handlers` and `signal` are provided (from `run()`), host handlers are
+ * available as a fallback for effects not matched by any local `try/with`.
  */
-export function tick(step: Step): Step | Promise<Step> {
+export function tick(step: Step, handlers?: Handlers, signal?: AbortSignal): Step | Promise<Step> {
   try {
     switch (step.type) {
       case 'Value': {
@@ -2357,7 +2457,7 @@ export function tick(step: Step): Step | Promise<Step> {
       case 'Apply':
         return applyFrame(step.frame, step.value, step.k)
       case 'Perform':
-        return dispatchPerform(step.effect, step.args, step.k)
+        return dispatchPerform(step.effect, step.args, step.k, undefined, handlers, signal)
     }
   }
   catch (error) {
@@ -2475,5 +2575,55 @@ export function evaluateNode(node: AstNode, contextStack: ContextStack): MaybePr
       return runAsyncTrampoline(freshInitial)
     }
     throw error
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Effect trampoline — async loop with host handler support
+// ---------------------------------------------------------------------------
+
+/**
+ * Evaluate an AST with full effect handler support.
+ *
+ * Uses the async trampoline loop, passing `handlers` and `signal` to `tick`
+ * so that `dispatchPerform` can fall back to host handlers when no local
+ * `try/with` matches.
+ *
+ * Always resolves — never rejects. All errors are captured in
+ * `RunResult.error`. Suspension is signaled via `RunResult.suspended`.
+ *
+ * The `AbortController` is created internally per `run()` call. The signal
+ * is passed to every host handler. Used for `race()` cancellation (Phase 6)
+ * and host-side timeouts.
+ */
+export async function evaluateWithEffects(
+  ast: Ast,
+  contextStack: ContextStack,
+  handlers?: Handlers,
+): Promise<RunResult> {
+  const abortController = new AbortController()
+  const signal = abortController.signal
+  const initial = buildInitialStep(ast.body, contextStack)
+
+  try {
+    let step: Step | Promise<Step> = initial
+    for (;;) {
+      if (step instanceof Promise) {
+        step = await step
+      }
+      if (step.type === 'Value' && step.k.length === 0) {
+        return { type: 'completed', value: step.value }
+      }
+      step = tick(step, handlers, signal)
+    }
+  }
+  catch (error) {
+    if (isSuspensionSignal(error)) {
+      return { type: 'suspended', continuation: error.k, meta: error.meta }
+    }
+    if (error instanceof LitsError) {
+      return { type: 'error', error }
+    }
+    return { type: 'error', error: new LitsError(`${error}`, undefined) }
   }
 }

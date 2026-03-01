@@ -29,3 +29,7 @@ export { type LitsError, isLitsError } from './errors'
 export type { ContextParams, FilePathParams, MinifyParams, PureParams, LitsRuntimeInfo, JsFunction } from './Lits/Lits'
 export { isGrid, isMatrix, isVector } from './typeGuards/annotatedArrays'
 export type { AutoCompleter } from './AutoCompleter/AutoCompleter'
+
+// Effects — standalone functions and types
+export { run, runSync } from './effects'
+export type { EffectContext, EffectHandler, Handlers, RunResult, RunOptions, RunSyncOptions } from './effects'

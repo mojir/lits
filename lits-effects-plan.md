@@ -431,7 +431,7 @@ Works end-to-end. Full test coverage for:
 
 Connect the trampoline to host-side JavaScript handlers.
 
-### 3a. `run(source, options)` API
+### 3a. `run(source, options)` API ✅ DONE
 
 ```typescript
 type HostHandler = (ctx: EffectContext) => Promise<void>
@@ -449,7 +449,15 @@ type RunResult =
 async function run(source: string, options?: RunOptions): Promise<RunResult>
 ```
 
-### 3b. `dispatchEffect` — host handler lookup
+**Implemented:**
+- `src/evaluator/effectTypes.ts` — Shared types extracted to break circular dependency: `EffectContext`, `EffectHandler`, `Handlers`, `RunResult`, `SuspensionSignal`, `isSuspensionSignal`
+- `src/effects.ts` — Standalone `run()` and `runSync()` functions with `RunOptions` and `RunSyncOptions`
+- `runSync()` — Pure synchronous evaluation, supports bindings (including JS functions) and modules, throws if async
+- `run()` — Async evaluation with handlers, wraps all errors (including parse errors) in `RunResult`
+- `buildAst(source)` helper — tokenize → minify → parse (no caching)
+- Exported from `src/index.ts`: `run`, `runSync`, `EffectContext`, `EffectHandler`, `Handlers`, `RunResult`, `RunOptions`, `RunSyncOptions`
+
+### 3b. `dispatchEffect` — host handler lookup ✅ DONE
 
 When `Step.Perform` finds no matching `TryWithFrame` in `k`:
 1. Look up `effect.name` in `options.handlers`
@@ -460,12 +468,23 @@ When `Step.Perform` finds no matching `TryWithFrame` in `k`:
 `resume(value)` — re-enters the trampoline with `value` and the captured `k`.
 `suspend(meta?)` — returns immediately from `run()` with `{ type: 'suspended', blob, meta }`.
 
-### 3c. AbortSignal for handler cancellation
+**Implemented:**
+- `dispatchPerform` in `trampoline.ts` — Extended signature: `(effect, args, k, sourceCodeInfo?, handlers?, signal?)`. After searching continuation stack for `TryWithFrame`, falls back to `handlers?.[effect.name]`, then calls `dispatchHostHandler`
+- `dispatchHostHandler` (NEW, ~70 lines) — Creates `EffectContext` with `resume` and `suspend` callbacks inside `new Promise<Step>()`. `resume(value)` resolves with `ValueStep`; `resume(promise)` awaits then resolves; failed promises fed to `unwindToTryCatch`. `suspend(meta)` rejects with `SuspensionSignal`. Double-call guarded by `settled` flag. Handler errors fed to `unwindToTryCatch`.
+- `tick` — Extended signature: `(step, handlers?, signal?)`, passes handlers/signal to `dispatchPerform`
+- Local `try/with` handlers take precedence over host handlers (tested)
+
+### 3c. AbortSignal for handler cancellation ✅ DONE
 
 Each `run()` call creates an `AbortController`. The signal is passed to every handler.
 Used in Phase 6 (race), but wired up now.
 
-### 3d. Deliverable
+**Implemented:**
+- `evaluateWithEffects` in `trampoline.ts` creates `AbortController` per `run()` call
+- Signal passed through `tick` → `dispatchPerform` → `dispatchHostHandler` → handler's `EffectContext`
+- Test verifies signal is accessible in handler and not aborted during normal execution
+
+### 3d. Deliverable ✅ DONE
 
 ```typescript
 const result = await run(source, {
@@ -478,6 +497,12 @@ const result = await run(source, {
 ```
 
 Works end-to-end. Tests covering sync resume, async resume, unhandled effect error.
+
+**Verified:**
+- `__tests__/effects.test.ts` — 63 tests (31 Phase 2 + 32 Phase 3), all passing
+- Phase 3 test categories: runSync basics (4), run basics (5), sync resume (4), async resume (3), unhandled effects (2), error handling (2), local/host precedence (3), suspension (2), AbortSignal (1), end-to-end workflows (6)
+- `npm run check` passes: lint clean, typecheck clean, 5150 tests pass, build succeeds, no circular dependencies
+- Coverage: effects.ts 97.27%, effectTypes.ts 100%, trampoline.ts 92.67%
 
 ---
 
