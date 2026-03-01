@@ -122,27 +122,25 @@ The foundation. Replace the recursive `evaluateNode` entirely with an explicit-s
 trampoline. The recursive evaluator is retired. Both `runSync` and `run` use the same
 trampoline — the difference is only in the loop wrapper.
 
-### 1a. Define Frame types
+### 1a. Define Frame types ✅ DONE
 
-One frame type per recursive call pattern:
+One frame type per recursive call pattern. All frame types are **plain serializable objects** — no functions, no closures.
 
-```typescript
-type Frame =
-  | { type: 'Sequence';     remaining: AstNode[]; env: Context }
-  | { type: 'IfBranch';     thenNode: AstNode; elseNode: AstNode; env: Context }
-  | { type: 'LetBinding';   name: string; remaining: Binding[]; body: AstNode[]; env: Context }
-  | { type: 'FnArg';        fn: LitsValue; collectedArgs: LitsValue[]; remaining: AstNode[]; env: Context }
-  | { type: 'FnBody';       /* return value passes through */ }
-  | { type: 'TryCatch';     errorSymbol: string | null; catchNode: AstNode; env: Context }
-  | { type: 'TryWith';      handlers: { effect: AstNode; handlerFn: AstNode }[]; env: Context }
-  | { type: 'AndShort';     remaining: AstNode[]; env: Context }
-  | { type: 'OrShort';      remaining: AstNode[]; env: Context }
-  | { type: 'CondBranch';   branches: CondBranch[]; env: Context }
-  | { type: 'WhenBody';     body: AstNode; env: Context }
-  // ... one per special expression that recurses into evaluateNode
-```
-
-All frame types are **plain serializable objects** — no functions, no closures.
+**Implemented:**
+- `src/evaluator/frames.ts` — 22 frame types covering all recursive evaluation patterns:
+  - **Program flow**: `SequenceFrame` (sequential node evaluation)
+  - **Branching**: `IfBranchFrame` (if/unless), `CondFrame` (multi-way cond), `MatchFrame` (pattern matching with phases)
+  - **Short-circuit**: `AndFrame` (&&), `OrFrame` (||), `QqFrame` (?? nullish coalescing)
+  - **Collection construction**: `ArrayBuildFrame` (with spread), `ObjectBuildFrame` (key/value pairs with spread)
+  - **Binding**: `LetBindFrame`, `LoopBindFrame` (loop binding setup), `LoopIterateFrame` (body with recur), `ForLoopFrame` (multi-binding nested iteration with phase tracking)
+  - **Control flow**: `ThrowFrame`, `RecurFrame` (collects args then signals tail-call)
+  - **Exception & effect handling**: `TryCatchFrame` (exception boundary), `TryWithFrame` (effect handler boundary)
+  - **Function calls**: `EvalArgsFrame` (argument collection), `CallFnFrame` (function dispatch), `FnBodyFrame` (user-defined body with recur support)
+  - **Destructuring**: `BindingDefaultFrame` (default value evaluation during destructuring)
+  - **Post-processing**: `NanCheckFrame` (NaN guard after normal expressions)
+- `src/evaluator/frames.test.ts` — 6 tests verifying type discriminants, exhaustive union coverage, and type exports
+- Helper types: `ForBindingLevelState`, `ContinuationStack` (type alias for `Frame[]`)
+- All 4950 tests pass, full pipeline passes
 
 ### 1b. Define the Step type
 
