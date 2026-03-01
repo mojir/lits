@@ -1,9 +1,6 @@
-import { LitsError } from '../../errors'
 import type { Any, Arr } from '../../interface'
 import type { AstNode, SpecialExpressionNode } from '../../parser/types'
-import { isSpreadNode } from '../../typeGuards/astNode'
 import { asAny } from '../../typeGuards/lits'
-import { chain, forEachSequential } from '../../utils/maybePromise'
 import type { BuiltinSpecialExpression, FunctionDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
@@ -40,28 +37,6 @@ const docs: FunctionDocs = {
 export const arraySpecialExpression: BuiltinSpecialExpression<Any, ArrayNode> = {
   arity: {},
   docs,
-  evaluate: (node, contextStack, { evaluateNode }) => {
-    const result: Arr = []
-
-    return chain(
-      forEachSequential(node[1][1], (param) => {
-        if (isSpreadNode(param)) {
-          return chain(evaluateNode(param[1], contextStack), (spreadValue) => {
-            if (!Array.isArray(spreadValue)) {
-              throw new LitsError('Spread value is not an array', param[2])
-            }
-            result.push(...spreadValue)
-          })
-        }
-        else {
-          return chain(evaluateNode(param, contextStack), (value) => {
-            result.push(value)
-          })
-        }
-      }),
-      () => result,
-    )
-  },
   evaluateAsNormalExpression: (params, sourceCodeInfo) => {
     const result: Arr = []
 

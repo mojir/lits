@@ -144,7 +144,7 @@ interface EvaluateHelpers {
   getUndefinedSymbols: GetUndefinedSymbols
 }
 export interface BuiltinSpecialExpression<T, N extends SpecialExpressionNode> {
-  evaluate: (node: N, contextStack: ContextStack, helpers: EvaluateHelpers) => MaybePromise<T>
+  evaluate?: (node: N, contextStack: ContextStack, helpers: EvaluateHelpers) => MaybePromise<T>
   evaluateAsNormalExpression?: NormalExpressionEvaluator<T>
   arity: Arity
   docs?: SpecialExpressionDocs

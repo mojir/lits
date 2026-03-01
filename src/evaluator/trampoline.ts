@@ -23,7 +23,6 @@
  * - All state lives in frames (no JS closures) — enabling serialization later.
  */
 
-import type { SpecialExpression } from '../builtin'
 import { builtin } from '../builtin'
 import { evaluateBindingNodeValues, getAllBindingTargetNames, tryMatch } from '../builtin/bindingNode'
 import type { LoopBindingNode } from '../builtin/specialExpressions/loops'
@@ -113,7 +112,6 @@ export type { Step }
 // ---------------------------------------------------------------------------
 // Recursive evaluateNode — used as a helper for normal expressions and
 // binding utilities until the full trampoline migration is complete.
-// This mirrors the existing evaluator/index.ts logic.
 // ---------------------------------------------------------------------------
 
 function evaluateNodeRecursive(node: AstNode, contextStack: ContextStack): MaybePromise<Any> {
@@ -138,14 +136,20 @@ function evaluateNodeRecursive(node: AstNode, contextStack: ContextStack): Maybe
       })
     }
     case NodeTypes.SpecialExpression: {
-      const seNode = node as SpecialExpressionNode
-      const specialExpressionType = seNode[1][0]
-      const specialExpression: SpecialExpression = asNonUndefined(builtin.specialExpressions[specialExpressionType], seNode[2])
-      const castedEvaluate = specialExpression.evaluate as Function
-      return chain(
-        castedEvaluate(seNode, contextStack, { evaluateNode: evaluateNodeRecursive, builtin, getUndefinedSymbols }) as MaybePromise<Any>,
-        resolved => annotate(resolved),
-      )
+      // Route through the trampoline — special expressions are fully handled
+      // by stepSpecialExpression and their corresponding frame types.
+      // This replaces the old `.evaluate()` call on special expression objects.
+      const initial: Step = { type: 'Eval', node, env: contextStack, k: [] }
+      try {
+        return annotate(runSyncTrampoline(initial))
+      }
+      catch (error) {
+        if (error instanceof LitsError && error.message.includes('Unexpected async operation')) {
+          const freshInitial: Step = { type: 'Eval', node, env: contextStack, k: [] }
+          return runAsyncTrampoline(freshInitial).then(r => annotate(r))
+        }
+        throw error
+      }
     }
     /* v8 ignore next 2 */
     default:

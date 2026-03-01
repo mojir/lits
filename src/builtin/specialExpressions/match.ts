@@ -1,10 +1,8 @@
 import type { Any } from '../../interface'
 import type { AstNode, BindingTarget, SpecialExpressionNode } from '../../parser/types'
-import type { MaybePromise } from '../../utils/maybePromise'
-import { chain } from '../../utils/maybePromise'
 import type { BuiltinSpecialExpression, CustomDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
-import { getAllBindingTargetNames, tryMatch } from '../bindingNode'
+import { getAllBindingTargetNames } from '../bindingNode'
 import type { Context } from '../../evaluator/interface'
 
 // Each case: [pattern, body, guard?]
@@ -52,42 +50,6 @@ end`,
 export const matchSpecialExpression: BuiltinSpecialExpression<Any, MatchNode> = {
   arity: {},
   docs,
-  evaluate: (node, contextStack, { evaluateNode }) => {
-    const [, matchValueNode, cases] = node[1]
-    return chain(evaluateNode(matchValueNode, contextStack), (matchValue) => {
-      function processCase(index: number): MaybePromise<Any> {
-        if (index >= cases.length)
-          return null
-        const [pattern, body, guard] = cases[index]!
-        return chain(
-          tryMatch(pattern, matchValue, n => evaluateNode(n, contextStack)),
-          (bindings) => {
-            if (bindings === null)
-              return processCase(index + 1)
-
-            // Pattern matched - create context with bound variables
-            const context: Context = {}
-            for (const [name, value] of Object.entries(bindings)) {
-              context[name] = { value }
-            }
-            const newContextStack = contextStack.create(context)
-
-            // Check guard if present
-            if (guard) {
-              return chain(evaluateNode(guard, newContextStack), (guardResult) => {
-                if (!guardResult)
-                  return processCase(index + 1)
-                return evaluateNode(body, newContextStack)
-              })
-            }
-
-            return evaluateNode(body, newContextStack)
-          },
-        )
-      }
-      return processCase(0)
-    })
-  },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
     const result = new Set<string>()
 

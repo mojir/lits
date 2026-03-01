@@ -2,7 +2,6 @@ import { UserDefinedError } from '../../errors'
 import type { AstNode, SpecialExpressionNode } from '../../parser/types'
 import { asString } from '../../typeGuards/string'
 import { toFixedArity } from '../../utils/arity'
-import { chain } from '../../utils/maybePromise'
 import type { BuiltinSpecialExpression, FunctionDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
@@ -31,14 +30,6 @@ const docs: FunctionDocs = {
 export const throwSpecialExpression: BuiltinSpecialExpression<null, ThrowNode> = {
   arity: toFixedArity(1),
   docs,
-  evaluate: (node, contextStack, { evaluateNode }) => {
-    return chain(evaluateNode(node[1][1], contextStack), (result) => {
-      const message = asString(result, node[2], {
-        nonEmpty: true,
-      })
-      throw new UserDefinedError(message, node[2])
-    })
-  },
   evaluateAsNormalExpression: (params, sourceCodeInfo) => {
     const message = asString(params[0], sourceCodeInfo, {
       nonEmpty: true,

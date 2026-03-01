@@ -264,6 +264,17 @@ Special expressions to convert (~15-20 total):
 `if`, `when`, `let`, `do`, `and`, `or`, `cond`, `fn`, `for`, `loop`, `try`,
 `def`, `defn`, `case`, `comment`, `assert`, `recur`
 
+**Implemented:**
+- Routed `evaluateNodeRecursive`'s `SpecialExpression` case through the trampoline (mini-trampoline via `runSyncTrampoline`/`runAsyncTrampoline`) instead of calling `.evaluate()` directly. All 20 special expression types now execute via `stepSpecialExpression` → frame-based evaluation.
+- Made `evaluate` optional in `BuiltinSpecialExpression` interface (`src/builtin/interface.ts`).
+- Removed `evaluate` method from all 19 special expression files: and.ts, array.ts, block.ts, cond.ts, defined.ts, functions.ts, if.ts, import.ts, let.ts, loop.ts, loops.ts (for+doseq), match.ts, object.ts, or.ts, qq.ts, recur.ts, throw.ts, try.ts, unless.ts.
+- Removed dead `evaluateFunction` helper from `functions.ts` and dead `addToContext`/`evaluateLoop` helpers from `loops.ts`.
+- Cleaned up 40 unused imports across all 19 files (imports that were only used by the removed `evaluate` methods).
+- Deleted old recursive evaluator files: `src/evaluator/index.ts`, `src/evaluator/functionExecutors.ts`, `src/evaluator/functionExecutors.test.ts`.
+- 7 files retain `evaluateAsNormalExpression` (operator forms): and.ts, array.ts, object.ts, or.ts, qq.ts, recur.ts, throw.ts — these are used by `NormalExpression` dispatch, not by the trampoline's special expression path.
+- `npm run check` passes: lint clean, typecheck clean, 5061 tests pass (152 files), build succeeds.
+- Coverage: trampoline.ts at 92.35% statements.
+
 ### 1f. Tail call (`recur`) in the trampoline
 
 In the recursive evaluator, `recur` throws `RecurSignal` caught by a `for(;;)` loop.

@@ -2,7 +2,6 @@ import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { AstNode, SpecialExpressionNode, SymbolNode } from '../../parser/types'
 import { joinSets } from '../../utils'
-import { tryCatch } from '../../utils/maybePromise'
 import type { BuiltinSpecialExpression, CustomDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
@@ -53,26 +52,6 @@ end`,
 export const trySpecialExpression: BuiltinSpecialExpression<Any, TryNode> = {
   arity: {},
   docs,
-  evaluate: (node, contextStack, { evaluateNode }) => {
-    const [, tryExpression, errorSymbol, catchExpression] = node[1]
-    // Note: withHandlers (node[1][4]) will be used in Phase 2 for effect dispatch.
-    // For now, only the try/catch behavior is active.
-    if (catchExpression) {
-      return tryCatch(
-        () => evaluateNode(tryExpression, contextStack),
-        (error) => {
-          const newContext: Context = errorSymbol
-            ? {
-                [errorSymbol[1]]: { value: error as Any },
-              }
-            : {}
-          return evaluateNode(catchExpression, contextStack.create(newContext))
-        },
-      )
-    }
-    // with-only form (or empty — will be validated in Phase 2)
-    return evaluateNode(tryExpression, contextStack)
-  },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
     const [, tryExpression, errorSymbol, catchExpression, withHandlers] = node[1]
     const tryResult = getUndefinedSymbols([tryExpression], contextStack, builtin, evaluateNode)

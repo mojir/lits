@@ -1,13 +1,8 @@
-import { LitsError, RecurSignal } from '../../errors'
 import type { Context } from '../../evaluator/interface'
 import type { Any } from '../../interface'
 import type { AstNode, BindingNode, SpecialExpressionNode } from '../../parser/types'
-import { asAny } from '../../typeGuards/lits'
 import { joinSets } from '../../utils'
-import { valueToString } from '../../utils/debug/debugTools'
-import type { MaybePromise } from '../../utils/maybePromise'
-import { chain, forEachSequential, reduceSequential, tryCatch } from '../../utils/maybePromise'
-import { evaluateBindingNodeValues, getAllBindingTargetNames } from '../bindingNode'
+import { getAllBindingTargetNames } from '../bindingNode'
 import type { BuiltinSpecialExpression, CustomDocs } from '../interface'
 import type { specialExpressionTypes } from '../specialExpressionTypes'
 
@@ -44,120 +39,6 @@ end`,
 export const loopSpecialExpression: BuiltinSpecialExpression<Any, LoopNode> = {
   arity: {},
   docs,
-  evaluate: (node, contextStack, { evaluateNode }) => {
-    const bindingNodes = node[1][1]
-
-    // Set up initial binding context sequentially (bindings may depend on each other)
-    const initialContext: Context = {}
-    const setupBindings = reduceSequential(
-      bindingNodes,
-      (result: Context, bindingNode) => {
-        return chain(evaluateNode(bindingNode[1][1], contextStack.create(result)), (val) => {
-          return chain(evaluateBindingNodeValues(bindingNode[1][0], val, Node => evaluateNode(Node, contextStack)), (valueRecord) => {
-            Object.entries(valueRecord).forEach(([name, value]) => {
-              result[name] = { value }
-            })
-            return result
-          })
-        })
-      },
-      initialContext,
-    )
-
-    return chain(setupBindings, (bindingContext) => {
-      const newContextStack = contextStack.create(bindingContext)
-      const body = node[1][2]
-
-      function rebindAndIterate(params: unknown[]): MaybePromise<Any> {
-        if (params.length !== bindingNodes.length) {
-          throw new LitsError(
-            `recur expected ${bindingNodes.length} parameters, got ${valueToString(params.length)}`,
-            node[2],
-          )
-        }
-        return chain(
-          forEachSequential(bindingNodes, (bindingNode, index) => {
-            return chain(evaluateBindingNodeValues(bindingNode[1][0], asAny(params[index]), Node => evaluateNode(Node, contextStack)), (valueRecord) => {
-              for (const [name, value] of Object.entries(valueRecord)) {
-                bindingContext[name]!.value = value
-              }
-            })
-          }),
-          () => iterate(),
-        )
-      }
-
-      function iterate(): MaybePromise<Any> {
-        return tryCatch(
-          () => evaluateNode(body, newContextStack),
-          (error) => {
-            if (error instanceof RecurSignal) {
-              return rebindAndIterate(error.params)
-            }
-            throw error
-          },
-        )
-      }
-
-      // Use sync for(;;) loop for the sync case to avoid stack overflow
-      for (;;) {
-        try {
-          const result = evaluateNode(body, newContextStack)
-          if (result instanceof Promise) {
-            // Async path: handle recur via promise chain
-            return result.catch((error: unknown) => {
-              if (error instanceof RecurSignal) {
-                return rebindAndIterate(error.params)
-              }
-              throw error
-            })
-          }
-          return result
-        }
-        catch (error) {
-          if (error instanceof RecurSignal) {
-            const params = error.params
-            if (params.length !== bindingNodes.length) {
-              throw new LitsError(
-                `recur expected ${bindingNodes.length} parameters, got ${valueToString(params.length)}`,
-                node[2],
-              )
-            }
-            // rebindAndIterate returns MaybePromise — if any binding default is async,
-            // we must switch to the async iterate path
-            for (let index = 0; index < bindingNodes.length; index += 1) {
-              const bindingNode = bindingNodes[index]!
-              const valueRecord = evaluateBindingNodeValues(bindingNode[1][0], asAny(params[index]), Node => evaluateNode(Node, contextStack))
-              if (valueRecord instanceof Promise) {
-                // Switch to fully async path
-                return valueRecord.then((resolved) => {
-                  for (const [name, value] of Object.entries(resolved)) {
-                    bindingContext[name]!.value = value
-                  }
-                  // Handle remaining bindings then iterate
-                  return chain(
-                    forEachSequential(bindingNodes.slice(index + 1), (bn, subIndex) => {
-                      return chain(evaluateBindingNodeValues(bn[1][0], asAny(params[index + 1 + subIndex]), Node => evaluateNode(Node, contextStack)), (vr) => {
-                        for (const [name, value] of Object.entries(vr)) {
-                          bindingContext[name]!.value = value
-                        }
-                      })
-                    }),
-                    () => iterate(),
-                  )
-                })
-              }
-              for (const [name, value] of Object.entries(valueRecord)) {
-                bindingContext[name]!.value = value
-              }
-            }
-            continue
-          }
-          throw error
-        }
-      }
-    })
-  },
   getUndefinedSymbols: (node, contextStack, { getUndefinedSymbols, builtin, evaluateNode }) => {
     const bindingNodes = node[1][1]
 
