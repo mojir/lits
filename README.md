@@ -1,22 +1,25 @@
 # Lits
 
-A functional language with algebraic notation and JavaScript interoperability.
+A suspendable virtual machine — pause anywhere, resume anytime, debug backward through time.
 
 Try it in the [Lits Playground](https://mojir.github.io/lits/).
 
 ## Features
 
-- **Pure functional language** - Variables cannot be changed, ensuring predictable behavior and easier reasoning about code
-- **Expression-based syntax** - Everything in Lits is an expression that returns a value; there are no statements, making the language highly composable and consistent
-- **Fully serializable** - Every value returned from Lits evaluation, including functions and regexps, is serializable as JSON
-- **JavaScript interoperability** - JavaScript values and functions can easily be exposed in Lits
-- **Transparent async support** - When native JavaScript functions return Promises, Lits automatically handles them — no async/await syntax needed in Lits code
-- **First-class functions** - Functions are treated as values that can be passed to other functions
-- **Algebraic notation** - All operators can be used as functions, and functions that take two parameters can be used as operators
-- **Comprehensive standard library** - Rich set of functions for collections, math, strings, and more
-- **Structural equality** - Objects are compared by value, not by reference
-- **Destructuring** - Extract values from complex data structures with ease
-- **Lexical scoping** - Variables are scoped to their defining context
+- **Algebraic effects** - `perform` is the only IO boundary; host-side handlers in JavaScript decide whether to resume synchronously, resolve asynchronously, or suspend the VM entirely
+- **Serializable continuations** - when a handler suspends, the entire execution state freezes to a JSON blob; store it anywhere and resume across processes, machines, and time
+- **Time-travel debugging** - step backward through any execution, jump to any captured state, and explore alternate timelines by re-running from any point with a different value
+- **Parallel & race** - run effects concurrently with `parallel` (waits for all) and `race` (takes the first to complete, cancelling the rest)
+- **Pure functional** - immutable data and no side effects; variables cannot be changed, ensuring predictable behavior
+- **Expression-based syntax** - everything returns a value; no statements, making the language composable and consistent
+- **Sandboxed** - no file system, network, or global access unless the host explicitly provides it — safe for user-supplied code
+- **Algebraic notation** - all operators can be used as functions, and binary functions can be used as operators
+- **First-class functions** - functions are values that can be passed, returned, and composed freely
+- **Comprehensive standard library** - rich set of functions for collections, math, strings, regular expressions, and more
+- **JavaScript interoperability** - JavaScript values and functions can be exposed directly in Lits
+- **Fully serializable** - every Lits value, including functions and regexps, is JSON-serializable
+- **Structural equality** - objects are compared by value, not by reference
+- **Destructuring** - extract values from complex data structures with ease
 
 ## Installation
 

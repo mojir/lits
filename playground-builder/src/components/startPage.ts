@@ -19,9 +19,37 @@ export function getStartPage(): string {
     </div>
     <div ${styles('flex', 'justify-center', 'mt-6', 'mb-4')}>
       <div ${styles('font-sans', 'max-width: 600px;', 'text-color-gray-300', 'flex', 'flex-col')}>
-        <div ${styles('mt-4')}>Lits is a lightweight functional programming language designed to embed directly in JavaScript applications. It runs in a secure sandbox with immutable data and no side effects — safe for user-supplied logic, custom formulas, and dynamic business rules.</div>
+        <div ${styles('mt-4')}>Lits is a sandboxed, suspendable virtual machine that embeds in any JavaScript runtime. With algebraic effects and serializable continuations, execution state becomes a JSON blob — pause anywhere, resume across processes and time, and debug backward through history.</div>
         <div ${styles('mt-4')}>Features</div>
         <div ${styles('mt-4', 'ml-6', 'flex', 'flex-col', 'text-base', 'gap-2')}>
+          <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
+            <div ${styles('mt-px')}>${checkIcon}</div>
+            <div>
+              <span ${styles('font-bold')}>Algebraic effects</span>
+              <span ${styles('text-color-gray-400')}> - perform is the only IO boundary; host-side handlers decide whether to resume, await, or suspend the VM</span>
+            </div>
+          </div>
+          <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
+            <div ${styles('mt-px')}>${checkIcon}</div>
+            <div>
+              <span ${styles('font-bold')}>Serializable continuations</span>
+              <span ${styles('text-color-gray-400')}> - When a handler suspends, the entire execution state freezes to a JSON blob, resumable across processes, machines, and time</span>
+            </div>
+          </div>
+          <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
+            <div ${styles('mt-px')}>${checkIcon}</div>
+            <div>
+              <span ${styles('font-bold')}>Time-travel debugging</span>
+              <span ${styles('text-color-gray-400')}> - Step backward through any execution, jump to any captured state, and explore alternate timelines</span>
+            </div>
+          </div>
+          <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
+            <div ${styles('mt-px')}>${checkIcon}</div>
+            <div>
+              <span ${styles('font-bold')}>Parallel &amp; race</span>
+              <span ${styles('text-color-gray-400')}> - Run effects concurrently; parallel waits for all, race takes the first to complete</span>
+            </div>
+          </div>
           <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
             <div ${styles('mt-px')}>${checkIcon}</div>
             <div>
@@ -46,13 +74,6 @@ export function getStartPage(): string {
           <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
             <div ${styles('mt-px')}>${checkIcon}</div>
             <div>
-              <span ${styles('font-bold')}>Transparent async support</span>
-              <span ${styles('text-color-gray-400')}> - When native JavaScript functions return Promises, Lits automatically handles them — no async/await syntax needed</span>
-            </div>
-          </div>
-          <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
-            <div ${styles('mt-px')}>${checkIcon}</div>
-            <div>
               <span ${styles('font-bold')}>Algebraic notation</span>
               <span ${styles('text-color-gray-400')}> - All operators can be used as functions, and functions that take two parameters can be used as operators</span>
             </div>
@@ -62,20 +83,6 @@ export function getStartPage(): string {
             <div>
               <span ${styles('font-bold')}>Comprehensive standard library</span>
               <span ${styles('text-color-gray-400')}> - Rich set of functions for collections, math, strings, regular expressions, and more</span>
-            </div>
-          </div>
-          <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
-            <div ${styles('mt-px')}>${checkIcon}</div>
-            <div>
-              <span ${styles('font-bold')}>Structural equality</span>
-              <span ${styles('text-color-gray-400')}> - Objects are compared by value, not by reference</span>
-            </div>
-          </div>
-          <div ${styles('flex', 'flex-row', 'gap-4', 'items-start')}>
-            <div ${styles('mt-px')}>${checkIcon}</div>
-            <div>
-              <span ${styles('font-bold')}>Destructuring</span>
-              <span ${styles('text-color-gray-400')}> - Extract values from complex data structures with ease</span>
             </div>
           </div>
         </div>
